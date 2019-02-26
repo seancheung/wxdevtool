@@ -1,0 +1,83 @@
+#!/bin/bash
+
+CLI_PATH=$ROOT_DIR/package.nw/js/common/cli/index.js
+
+help()
+{
+    if [ ! "$1" ]; then
+        echo $"Usage: $0 start|port|debug"
+        echo ""
+        echo "  Commands:"
+        echo "      start       Start wxdevtool"
+        echo "      port        Show IDE listening port"
+        echo "      debug       Start remote debugging"
+        echo "Run help <command> to print command usage"
+    else
+        case "$1" in
+            start)
+                echo "Start wxdevtool"
+                echo $"Usage: $0 $1"
+                ;;
+            port)
+                echo "Show IDE listening port"
+                echo $"Usage: $0 $1"
+                ;;
+            debug)
+                echo "Start remote debugging"
+                echo $"Usage: $0 $1 [port=2222]"
+                ;;
+            *)
+				echo $"Unknown command"
+        esac
+    fi
+}
+
+start_wxdevtool()
+{
+    LC_ALL=zh_CN.UTF-8 "$ROOT_DIR/nw" -load-extension="$ROOT_DIR/package.nw/js/ideplugin" "$ROOT_DIR"
+}
+
+show_port()
+{
+    filename="$CONFIG_DIR/Default/.ide"
+    if [ -f "$filename" ]; then
+        cat "$filename"
+    else
+        echo "Please start program first"
+    fi
+    
+}
+
+start_debug()
+{
+    port=${$1:-2222}
+    LC_ALL=zh_CN.UTF-8 "$ROOT_DIR/nw" --remote-debugging-port=$port "$ROOT_DIR"
+}
+
+exec_cli()
+{
+    LC_ALL=zh_CN.UTF-8 node $CLI_PATH "@"
+}
+
+if [ ! "$1" ]; then
+	help
+	exit 1
+fi
+
+case "$1" in
+    help)
+        help "$2"
+        ;;
+    start)
+        start_wxdevtool
+        ;;
+    port)
+        show_port
+        ;;
+    debug)
+        start_debug
+        ;;
+    *)
+        echo "unkown command $1"
+        exit 1
+esac
