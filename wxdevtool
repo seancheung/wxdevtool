@@ -5,12 +5,13 @@ CLI_PATH=$ROOT_DIR/package.nw/js/common/cli/index.js
 help()
 {
     if [ ! "$1" ]; then
-        echo $"Usage: $0 start|port|debug"
+        echo $"Usage: $0 start|port|debug|exec"
         echo ""
         echo "  Commands:"
         echo "      start       Start wxdevtool"
         echo "      port        Show IDE listening port"
         echo "      debug       Start remote debugging"
+        echo "      exec        Forward CLI commands"
         echo "Run help <command> to print command usage"
     else
         case "$1" in
@@ -25,6 +26,10 @@ help()
             debug)
                 echo "Start remote debugging"
                 echo $"Usage: $0 $1 [port=2222]"
+                ;;
+            exec)
+                echo "Forward CLI commands"
+                echo $"Usage: $0 $1 [..args]"
                 ;;
             *)
 				echo $"Unknown command"
@@ -56,7 +61,7 @@ start_debug()
 
 exec_cli()
 {
-    LC_ALL=zh_CN.UTF-8 node $CLI_PATH "@"
+    LC_ALL=zh_CN.UTF-8 node $CLI_PATH $@
 }
 
 if [ ! "$1" ]; then
@@ -76,6 +81,9 @@ case "$1" in
         ;;
     debug)
         start_debug
+        ;;
+    exec)
+        exec_cli ${@:2}
         ;;
     *)
         echo "unkown command $1"
