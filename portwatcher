@@ -1,0 +1,39 @@
+#!/bin/bash
+
+IDE_PATH="$CONFIG_DIR/Default/.ide"
+
+reload_nginx()
+{
+live_port=$(cat $IDE_PATH)
+if [ -n "$live_port" ]; then
+    cat > /etc/nginx/sites-enabled/ide << EOF
+server
+{
+    listen 9000;
+    server_tokens off;
+
+    location / {
+        proxy_pass http://127.0.0.1:$live_port;
+        proxy_http_version 1.1;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-NginX-Proxy true;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
+        proxy_redirect off;
+    }
+}
+EOF
+    supervisorctl -c /etc/supervisor/supervisord.conf restart nginx
+fi
+}
+
+if [ -f "$IDE_PATH" ]; then
+    reload_nginx
+fi
+
+while inotifywait -e close_write "$IDE_PATH"; do
+    reload_nginx
+done

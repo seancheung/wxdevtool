@@ -1,3 +1,5 @@
 #!/bin/bash
 
-exec $ROOT_DIR/bin/wxdevtool start
+if [ -f "$WINEPREFIX/user.reg" ]; then
+    exec $ROOT_DIR/bin/wxdevtool start
+fi

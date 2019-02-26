@@ -21,7 +21,7 @@ RUN set -ex \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         curl ca-certificates openssl tzdata libgconf-2-4 gnupg2 dbus gnupg-agent \
-        locales jq python2.7 \
+        locales jq python2.7 inotify-tools \
         p7zip-full build-essential software-properties-common apt-transport-https \
     && echo $TIMEZONE > /etc/timezone \
     && ln -fs "/usr/share/zoneinfo/$TIMEZONE" /etc/localtime \
@@ -78,9 +78,9 @@ RUN set -ex \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /tmp/*
 
-COPY wxdevtool "/wxdevtool/bin/wxdevtool"
-COPY wxstart "/wxdevtool/bin/wxstart"
+COPY wxdevtool /wxdevtool/bin/wxdevtool
+COPY wxstart /wxdevtool/bin/wxstart
+COPY portwatcher /wxdevtool/bin/portwatcher
+COPY wxdevtool.conf /etc/supervisor/conf.d/
 
 ENV PATH "$ROOT_DIR/bin":$PATH
-
-CMD ["wxdevtool", "start"]

@@ -12,7 +12,28 @@ docker run -d --name wxdevtool -p 8080:80 -v /path/to/projects:/projects seanche
 
 ```bash
 docker exec -t wxdevtool wxdevtool help
+
+# forwar built-in commands
+docker exec -t wxdevtool wxdevtool exec [..args]
+# login
+docker exec -t wxdevtool wxdevtool exec --login
 ```
+
+See [Reference](https://developers.weixin.qq.com/miniprogram/dev/devtools/cli.html)
+
+## HTPP Service
+
+The IDE HTTP service is exposed at port 9000.
+
+```bash
+# mapping container port 9000 to local port 8083
+docker run -d --name wxdevtool -p 8083:9000 -p 8080:80 -v /path/to/projects:/projects seancheung/wxdevtool:latest
+
+# open project
+curl localhost:8083/open?projectpath=path_to_project
+```
+
+See [Reference](https://developers.weixin.qq.com/miniprogram/dev/devtools/http.html)
 
 ## Tags
 
@@ -52,6 +73,12 @@ docker exec -t wxdevtool-rc wxdevtool start
 ```
 
 Open Browser at _http://localhost:8080_, Open Wechat WebDevTool's settings and enable IDE service port. See [Referece](https://developers.weixin.qq.com/miniprogram/dev/devtools/cli.html)
+
+5. Restart container
+
+```bash
+docker restart wxdevtool-rc
+```
 
 ### Custom build Args
 
