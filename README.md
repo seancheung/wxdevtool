@@ -31,6 +31,9 @@ docker run -d --name wxdevtool -p 8083:9000 -p 8080:80 -v /path/to/projects:/pro
 
 # open project
 curl localhost:8083/open?projectpath=path_to_project
+
+# preview
+curl http://localhost:8083/preview?projectpath=/root/WeChatProjects/miniprogram-1
 ```
 
 See [Reference](https://developers.weixin.qq.com/miniprogram/dev/devtools/http.html)
@@ -55,13 +58,13 @@ rc tags are automated images which are not configured yet. To config manullay:
 1. Pull an RC image
 
 ```bash
-docker pull seancheung/wxdevtool:1.02-rc
+docker pull seancheung/wxdevtool:rc
 ```
 
 2. Run
 
 ```bash
-docker run -d --name wxdevtool-rc -p 8080:80 seancheung/wxdevtool:1.02-rc
+docker run -d --name wxdevtool-rc -p 8080:80 seancheung/wxdevtool:rc
 ```
 
 3. Config Wine
