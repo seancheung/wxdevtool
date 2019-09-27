@@ -39,8 +39,14 @@ See [Reference](https://developers.weixin.qq.com/miniprogram/dev/devtools/http.h
 
 |  Tag   |   Version    |
 | :----: | :----------: |
-| latest |    latest    |
-|  1.02  | 1.02.1902010 |
+| latest |    1.02.1909111    |
+| rc |    1.02.1909111    |
+|  1.02  | 1.02.1909111 |
+|  1.02-rc  | 1.02.1909111 |
+|  1909111  | 1.02.1909111 |
+|  1909111-rc  | 1.02.1909111 |
+|  1902010  | 1.02.1902010 |
+|  1902010-rc  | 1.02.1902010 |
 
 ### RC Tags
 
@@ -60,11 +66,15 @@ docker run -d --name wxdevtool-rc -p 8080:80 seancheung/wxdevtool:1.02-rc
 
 3. Config Wine
 
+Open Browser at _http://localhost:8080 wait until noVNC is up. Then run
+
 ```bash
 docker exec -t wxdevtool-rc winecfg
 ```
 
-Open Browser at _http://localhost:8080_, follow wine's instructions in UI. The attached shell will automatically quit when done.
+Follow wine's instructions in UI. The attached shell will automatically quit when done.
+
+> When being prompted by Wine, cancel all installation suggestions.
 
 4. Config wxdevtool to enable IDE service port
 

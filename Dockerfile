@@ -3,8 +3,8 @@ LABEL maintainer="Sean Cheung <theoxuanx@gmail.com>"
 
 ARG TIMEZONE=Asia/Shanghai
 ARG WXURL=https://servicewechat.com/wxa-dev-logic/download_redirect?type=x64&from=mpwiki
-ARG NODE_URL=https://nodejs.org/dist/v8.9.4/node-v8.9.4-linux-x64.tar.gz
-ARG NWJS_URL=https://dl.nwjs.io/v0.24.4/nwjs-sdk-v0.24.4-linux-x64.tar.gz
+ARG NODE_URL=https://nodejs.org/dist/v11.14.0/node-v11.14.0-linux-x64.tar.gz
+ARG NWJS_URL=https://dl.nwjs.io/v0.38.0/nwjs-sdk-v0.38.0-linux-x64.tar.gz
 
 ENV LANG C.UTF-8
 ENV DISPLAY :1.0
@@ -44,12 +44,12 @@ RUN set -ex \
     && export url=$(curl -sL -o /dev/null -w %{url_effective} $WXURL) \
     && export version=$(echo $url | grep -oP --color=never '(?<=wechat_devtools_)[\d\.]+(?=_x64\.exe)') \
     && echo "Downloading wxdevtool $version..." \
-    && export filename="/tmp/wx.7z" \
+    && export filename="/tmp/wx.exe" \
     && curl -sL -o $filename $WXURL \
     && echo "Decompressing '$filename'..." \
     && export tmp_dir="/tmp/wx" \
     && mkdir -p $tmp_dir \
-    && export tmp_pkg='$APPDATA/Tencent/微信web开发者工具/package.nw' \
+    && export tmp_pkg='$APPDATA/Tencent/微信开发者工具/package.nw' \
     && 7z x -y -o"$tmp_dir" $filename $tmp_pkg \
     && echo "Copying files..." \
     && cp -rf "$tmp_dir/$tmp_pkg" "$ROOT_DIR/" \
@@ -57,12 +57,11 @@ RUN set -ex \
     && export pkgname="$ROOT_DIR/package.nw" \
     && sed -ri -e 's#AppData/Local/\$\{global.userDirName\}/User Data#.config/\$\{global.userDirName\}#g' "$pkgname/js/common/cli/index.js" \
     && sed -ri -e 's#`./\$\{global.appname\}.exe`#i.join(__dirname, "../../../../bin/wxstart")#g' "$pkgname/js/common/cli/index.js" \
-    && sed -ri -e 's#微信web开发者工具#wxdevtool#g' "$pkgname/package.json" \
-    && ls $pkgname/js/*.js | xargs sed -ri -e 's/f\.isMac\?"node-sync-ipc":"node-sync-ipc-nwjs"/"node-sync-ipc"/g' \
+    && sed -ri -e 's#微信开发者工具#wxdevtool#g' "$pkgname/package.json" \
     && cd "$pkgname/node_modules/node-sync-ipc" \
     && "$ROOT_DIR/bin/node" "$ROOT_DIR/bin/npm" i --unsafe-perm --scripts-prepend-node-path \
-    && cd "$pkgname/node_modules/node-sync-ipc-nwjs" \
-    && "$ROOT_DIR/bin/node" "$ROOT_DIR/bin/npm" i --unsafe-perm --scripts-prepend-node-path \
+    && rm -rf "$pkgname/node_modules/node-sync-ipc-nwjs" \
+    && cp -rf "$pkgname/node_modules/node-sync-ipc" "$pkgname/node_modules/node-sync-ipc-nwjs" \
     && mkdir -p $HOME/.wine32 \
     && for f in $pkgname/js/vendor/*.exe; do \
         mv $f "$ROOT_DIR/"; \
